@@ -15,11 +15,16 @@ function App() {
     const [connected, setConnected] = useState(false)
     const [sequence, setSequence] = useState(null)
     const [orderbook, setOrderbook] = useState<Delta>({ bids: [], asks: [] })
+    const WEB_SOCKET_URL =
+        process.env.WEB_SOCKET_URL ?? 'wss://api.prod.rabbitx.io/ws'
+    const token =
+        process.env.TOKEN ??
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MDAwMDAwMDAwIiwiZXhwIjo2NTQ4NDg3NTY5fQ.o_qBZltZdDHBH3zHPQkcRhVBQCtejIuyq8V1yj5kYq8'
 
     useEffect(() => {
         // connect web socket
-        const centrifuge = new Centrifuge('wss://api.prod.rabbitx.io/ws', {
-            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MDAwMDAwMDAwIiwiZXhwIjo2NTQ4NDg3NTY5fQ.o_qBZltZdDHBH3zHPQkcRhVBQCtejIuyq8V1yj5kYq8',
+        const centrifuge = new Centrifuge(WEB_SOCKET_URL, {
+            token,
         })
         centrifuge.on('connected', function (ctx) {
             setConnected(true)
