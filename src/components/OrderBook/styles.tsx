@@ -1,26 +1,35 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const Container = styled.div`
-  display: flex;
-  min-height: 31.25em;
-  flex-direction: column-reverse;
-  justify-content: center;
-  align-items: center;
-  border-color: #263946;
-
-  @media only screen and (min-width: 800px) {
-    flex-direction: row;
+    display: flex;
+    min-height: 31.25em;
+    flex-direction: column-reverse;
     justify-content: center;
-  }
+    align-items: center;
+    border-color: #263946;
+
+    @media only screen and (min-width: 800px) {
+        flex-direction: row;
+        justify-content: center;
+    }
 `
 
 export const TableContainer = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  color: #bfc1c8;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    color: #bfc1c8;
 
-  @media only screen and (min-width: 800px) {
-    width: 50%;
-  }
+    @media only screen and (min-width: 800px) {
+        width: 50%;
+    }
+`
+
+export const AllPriceLevelRowsContainer = styled.div`
+    max-height: 200px;
+    height: 200px;
+
+    @media only screen and (max-width: 800px) {
+        overflow: hidden;
+    }
 `

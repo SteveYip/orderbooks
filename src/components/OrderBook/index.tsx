@@ -1,10 +1,11 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import TitleRow from './TitleRow'
-import { Container, TableContainer } from './styles'
+import { Container, TableContainer, AllPriceLevelRowsContainer } from './styles'
 import PriceLevelRow from './PriceLevelRow'
 import Loader from '../Loader'
 import { PriceLevelRowContainer } from './PriceLevelRow/styles'
 import { get, sum } from 'lodash'
+import DepthComponet from './Depth'
 
 export enum OrderType {
     BIDS,
@@ -14,6 +15,7 @@ export enum OrderType {
 interface OrderBookProps {
     windowWidth: number
     orderBook: Delta
+    connected: boolean
 }
 
 interface Delta {
@@ -24,6 +26,7 @@ interface Delta {
 const OrderBook: FunctionComponent<OrderBookProps> = ({
     windowWidth,
     orderBook,
+    connected,
 }) => {
     const MOBILE_WIDTH = 800
     const ORDERBOOK_LEVELS = 25
@@ -80,9 +83,26 @@ const OrderBook: FunctionComponent<OrderBookProps> = ({
                         },
                         []
                     )
+                    let totalDepth = 0
+                    const maxTotal = sum(
+                        sortedLevelsByPrice
+                            .filter((arr) => arr.length > 0)
+                            .reduce((acc: any, curr: any) => {
+                                const lastSize = curr[curr.length - 1]
+                                acc.push(parseFloat(lastSize))
+                                return acc
+                            }, [])
+                    )
                     const total: number = sum(sizeArray)
+                    const depth = (total / maxTotal) * 100
                     return (
                         <PriceLevelRowContainer key={idx + price + size}>
+                            <DepthComponet
+                                key={`${idx + price + size}_depth`}
+                                windowWidth={windowWidth}
+                                depth={depth}
+                                orderType={orderType}
+                            />
                             <PriceLevelRow
                                 key={size + idx}
                                 size={size}
@@ -101,31 +121,31 @@ const OrderBook: FunctionComponent<OrderBookProps> = ({
 
     return (
         <Container>
-            {get(orderBook, 'bids') && get(orderBook, 'asks') ? (
+            {get(orderBook, 'bids') && get(orderBook, 'asks') && connected ? (
                 <>
                     <TableContainer>
                         <TitleRow
                             windowWidth={windowWidth}
-                            reversedFieldsOrder={true}
+                            reversedFieldsOrder={false}
                         />
-                        <div>
+                        <AllPriceLevelRowsContainer>
                             {buildPriceLevels(
                                 get(orderBook, 'bids', []),
                                 OrderType.BIDS
                             )}
-                        </div>
+                        </AllPriceLevelRowsContainer>
                     </TableContainer>
                     <TableContainer>
                         <TitleRow
                             windowWidth={windowWidth}
                             reversedFieldsOrder={true}
                         />
-                        <div>
+                        <AllPriceLevelRowsContainer>
                             {buildPriceLevels(
                                 get(orderBook, 'asks', []),
                                 OrderType.ASKS
                             )}
-                        </div>
+                        </AllPriceLevelRowsContainer>
                     </TableContainer>
                 </>
             ) : (

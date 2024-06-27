@@ -21,6 +21,14 @@ function App() {
         process.env.TOKEN ??
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MDAwMDAwMDAwIiwiZXhwIjo2NTQ4NDg3NTY5fQ.o_qBZltZdDHBH3zHPQkcRhVBQCtejIuyq8V1yj5kYq8'
 
+    // Window width detection
+    useEffect(() => {
+        window.onresize = () => {
+            setWindowWidth(window.innerWidth)
+        }
+        setWindowWidth(() => window.innerWidth)
+    }, [])
+
     useEffect(() => {
         // connect web socket
         const centrifuge = new Centrifuge(WEB_SOCKET_URL, {
@@ -32,20 +40,17 @@ function App() {
         })
 
         // disconnect
-        // centrifuge.on('disconnected', function(ctx) {
-        //   setConnected(false);
-        //   console.log('Disconnected from RabbitX');
-        // });
+        centrifuge.on('disconnected', function (ctx) {
+            setConnected(false)
+            console.log('Disconnected from RabbitX')
+        })
 
         // subscript orderbook, using BTC-USD
         const sub = centrifuge.newSubscription('orderbook:BTC-USD')
 
         sub.on('publication', function (ctx) {
             const data = ctx.data
-            if (
-                sequence !== null &&
-                get(ctx, 'data.sequence') !== sequence + 1
-            ) {
+            if (sequence !== null && get(ctx, 'data.sequence') < sequence) {
                 console.warn('Sequence mismatch, resubscribing...')
                 sub.unsubscribe()
                 sub.subscribe()
@@ -99,7 +104,11 @@ function App() {
         <>
             <GlobalStyle />
             <StatusMessage connected={connected} />
-            <OrderBook windowWidth={windowWidth} orderBook={orderbook} />
+            <OrderBook
+                windowWidth={windowWidth}
+                orderBook={orderbook}
+                connected={connected}
+            />
         </>
     )
 }
