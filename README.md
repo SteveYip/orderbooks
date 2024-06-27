@@ -29,3 +29,7 @@ Challenge: The orderbook needs to handle real-time updates from WebSocket, which
 ### UI Enhancements
 
 Challenge: The current orderbook user interface is relatively simple, displaying only the prices and quantities of bids and asks. As features increase and user needs evolve, the UI can be further enhanced to provide a better user experience.
+
+### Data
+
+Challenge: There are some data that has price but is zero
