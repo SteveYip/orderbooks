@@ -33,3 +33,8 @@ Challenge: The current orderbook user interface is relatively simple, displaying
 ### Data
 
 Challenge: There are some data that has price but is zero
+
+### Testing
+
+Challenge: There are no test case
+Solution: WIP
